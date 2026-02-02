@@ -1,0 +1,719 @@
+:root {
+    --bg-color: #050505;
+    --text-main: #ffffff;
+    --text-muted: #b0b0b0;
+    --neon-blue: #00f3ff;
+    --neon-purple: #bc13fe;
+    --thunder-white: #ffffff;
+    --electric-glow: rgba(0, 243, 255, 0.6);
+    --glass-bg: rgba(10, 10, 20, 0.7);
+    --glass-border: rgba(0, 243, 255, 0.3);
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-main);
+    overflow: hidden;
+    /* Main page fixed */
+    margin: 0;
+    height: 100vh;
+    perspective: 1500px;
+    font-weight: 400;
+    /* Back to Normal */
+    text-shadow: none;
+    /* Remove heavy shadow */
+    position: relative;
+    /* Ensure stacking context */
+}
+
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    /* Behind everything */
+    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+    /* Deep space bg */
+    pointer-events: none;
+}
+
+/* NEON HEADINGS */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.thunder-title,
+.navbar-brand span {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--neon-blue);
+    font-weight: 600;
+    /* Reduced Boldness */
+}
+
+/* WATER FLOW TEXT EFFECT - HEADLINES ONLY */
+.display-4,
+.text-gradient {
+    background: linear-gradient(90deg, #ffffff, #a0d8ef, #ffffff);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: waterFlow 3s linear infinite;
+}
+
+/* NORMAL READABLE TEXT */
+p,
+.lead,
+input,
+.form-control,
+textarea,
+.message {
+    color: #fff !important;
+    /* Force Visible */
+    background: none;
+    -webkit-text-fill-color: #fff !important;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
+    /* Sharpness */
+}
+
+@keyframes waterFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Ensure Input Text is Visible (User Input) */
+#user-input {
+    caret-color: white;
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dashboard Content Scrollable */
+#resource-hub {
+    max-height: 85vh;
+    /* Allow room for header */
+    overflow-y: auto;
+    padding-bottom: 100px;
+    /* Space for chat widget */
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-blue) transparent;
+}
+
+/* LANDING PAGE */
+#landing-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.8s ease;
+}
+
+.landing-content {
+    text-align: center;
+    z-index: 2001;
+}
+
+.thunder-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    white-space: nowrap;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000;
+    /* Black Text */
+    background-color: #FFA500;
+    /* Light Orange Background */
+    padding: 0 20px;
+    border-radius: 10px;
+    display: inline-block;
+    -webkit-text-stroke: 2px black;
+    /* Darker Effect */
+    text-shadow:
+        4px 4px 0px #000,
+        0 0 20px #FFA500,
+        0 0 40px #FF4500;
+    animation: flicker 3s infinite alternate;
+    margin-bottom: 20px;
+}
+
+/* Global Thunder Button Effect */
+button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    animation: thunder-shake 0.5s ease-in-out infinite;
+    box-shadow: 0 0 20px #fff, 0 0 40px var(--neon-blue);
+}
+
+@keyframes thunder-shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+.thunder-desc {
+    font-size: 1.5rem;
+    color: #ddd;
+    margin-bottom: 40px;
+    font-weight: 300;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-start {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    background: var(--neon-blue);
+    border: none;
+    padding: 15px 50px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--neon-blue);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.btn-start:hover {
+    background: #fff;
+    box-shadow: 0 0 40px #fff, 0 0 80px var(--neon-blue);
+    transform: scale(1.1);
+}
+
+.btn-tips {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    /* Slightly smaller text */
+    font-weight: bold;
+    color: #fff;
+    background: transparent;
+    border: 2px solid var(--neon-purple);
+    padding: 15px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.btn-tips:hover {
+    background: var(--neon-purple);
+    box-shadow: 0 0 40px var(--neon-purple), 0 0 80px var(--neon-purple);
+    transform: scale(1.1);
+}
+
+/* DASHBOARD (Initially Hidden/Rotated) */
+#main-dashboard {
+    position: absolute;
+    /* Fix: Ensure it sits on top when active */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: rotateY(-90deg);
+    /* Start rotated away */
+    transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 1s ease;
+    transform-origin: center;
+    pointer-events: none;
+    /* Prevent clicks when hidden */
+    /* Behind landing page initially */
+    z-index: 100;
+}
+
+
+#main-dashboard.active {
+    opacity: 1;
+    transform: rotateY(0deg);
+    pointer-events: auto;
+    z-index: 2000;
+    /* Bring to front if needed, though landing page will be hidden */
+}
+
+/* Animations */
+@keyframes flicker {
+
+    0%,
+    18%,
+    22%,
+    25%,
+    53%,
+    57%,
+    100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px var(--neon-blue),
+            0 0 80px var(--neon-blue),
+            0 0 90px var(--neon-blue),
+            0 0 100px var(--neon-blue),
+            0 0 150px var(--neon-blue);
+    }
+
+    20%,
+    24%,
+    55% {
+        text-shadow: none;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Zen Music Player */
+.zen-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--neon-blue);
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 3000;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.zen-player:hover {
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.equalizer {
+    display: flex;
+    gap: 3px;
+    height: 20px;
+    align-items: flex-end;
+}
+
+.bar {
+    width: 3px;
+    background: var(--neon-blue);
+    animation: equalize 1s infinite alternate;
+}
+
+.bar:nth-child(2) {
+    animation-delay: 0.2s;
+    height: 15px;
+}
+
+.bar:nth-child(3) {
+    animation-delay: 0.4s;
+    height: 10px;
+}
+
+@keyframes equalize {
+    0% {
+        height: 5px;
+    }
+
+    100% {
+        height: 20px;
+    }
+}
+
+/* AI Orb */
+.ai-orb {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #fff, var(--neon-blue));
+    border-radius: 50%;
+    box-shadow: 0 0 40px var(--neon-blue);
+    animation: pulseOrb 4s infinite ease-in-out;
+    margin-right: 15px;
+}
+
+@keyframes pulseOrb {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+        box-shadow: 0 0 60px var(--neon-purple);
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* ... Keeping essential Chat/Glass styles ... */
+.glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+    border-radius: 20px;
+}
+
+.bot-message {
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+}
+
+.user-message {
+    background: rgba(188, 19, 254, 0.2);
+    border: 1px solid rgba(188, 19, 254, 0.4);
+    color: #fff;
+    text-shadow: 0 0 5px rgba(188, 19, 254, 0.5);
+}
+
+/* Utility */
+.flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.dashboard-container {
+    height: 90vh;
+    width: 95%;
+    max-width: 1400px;
+    margin: 5vh auto;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--neon-blue);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+.magic-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--thunder-white);
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* Fix for Flashcards in Dark Mode */
+/* Flashcard Grid Structure */
+.flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    width: 100%;
+    padding: 20px;
+}
+
+.flashcard {
+    cursor: pointer;
+    perspective: 1000px;
+    background: transparent;
+    height: 180px;
+    /* Specific height for grid consistency */
+    width: 100%;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+    border: 1px solid var(--neon-purple);
+    background: rgba(20, 20, 40, 0.8);
+    box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
+}
+
+
+.flashcard-back {
+    transform: rotateY(180deg);
+    background: rgba(40, 20, 60, 0.95);
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+}
+
+/* Floating Chat Widget */
+#chat-widget-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 9999;
+    /* Ensure top most */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: auto;
+    /* Force clickable */
+}
+
+.btn-chat-toggle {
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    border: none;
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: bold;
+    border-radius: 50px;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    cursor: pointer;
+    font-family: 'Orbitron';
+    transition: transform 0.3s;
+}
+
+.btn-chat-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+}
+
+/* ENHANCED GLASSMORPHISM - Default (Widget Mode) */
+.chat-popup {
+    width: 700px;
+    height: 85vh;
+    margin-bottom: 20px;
+    display: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(10, 10, 20, 0.65);
+    backdrop-filter: blur(25px) saturate(180%);
+    /* Blur for widget mode */
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-radius: 20px;
+    overflow: hidden;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* FULL SCREEN CHAT (ZEN MODE) - Transparent for Neural Background */
+body.zen-active .chat-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+    width: 90vw;
+    height: 90vh;
+    z-index: 10000;
+
+    /* REMOVE BLUR - MAKE TRANSPARENT */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    /* Very slight dark tint for text contrast */
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+}
+
+.close-overlay {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.close-overlay:hover {
+    transform: rotate(90deg) scale(1.1);
+    color: var(--neon-blue);
+}
+
+/* ZEN MODE BUTTON */
+.btn-zen {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    background: transparent;
+    border: 1px solid var(--neon-purple);
+    color: var(--neon-purple);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-zen:hover {
+    background: var(--neon-purple);
+    color: white;
+    box-shadow: 0 0 15px var(--neon-purple);
+}
+
+/* ZEN MODE ACTIVE STATE */
+body.zen-active #main-dashboard,
+body.zen-active .navbar,
+body.zen-active .btn-chat-toggle {
+    transition: opacity 0.5s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+body.zen-active .chat-popup {
+    /* Full screen focus */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+    width: 90vw;
+    height: 90vh;
+    z-index: 10000;
+    /* Darker for focus */
+    border: 1px solid var(--neon-blue);
+}
+
+/* RESTORED STYLES (Missing caused collapse) */
+.chat-messages {
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-blue) transparent;
+}
+
+.tool-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 99999;
+    /* Highest priority */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tool-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.overlay-content {
+    text-align: center;
+    max-width: 600px;
+    padding: 40px;
+    border: 1px solid var(--neon-blue);
+    border-radius: 20px;
+    background: rgba(10, 10, 30, 0.95);
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+    position: relative;
+}

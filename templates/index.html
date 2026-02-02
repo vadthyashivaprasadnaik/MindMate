@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMate - Health Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&family=Orbitron:wght@400;700;900&family=Montserrat:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=17.13">
+</head>
+
+<body class="dark-mode">
+    <div id="thunder-flash" class="flash"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- LANDING PAGE -->
+    <div id="landing-page">
+        <div class="landing-content">
+            <img src="{{ url_for('static', filename='img/logo.png') }}?v=17.14" width="350" height="350"
+                style="width: 350px; height: 350px; border-radius: 50%; box-shadow: 0 0 80px var(--neon-blue); margin-bottom: 30px; display: block; margin-left: auto; margin-right: auto;"
+                alt="MindMate Logo">
+            <h1 class="thunder-title">MindMate</h1>
+            <p class="thunder-desc">Your Storm, My Calm. <br> An Intelligent Partner for Your Mental Battles.</p>
+            <div class="d-flex justify-content-center gap-4">
+                <button class="btn-start" id="start-btn">Start Chat</button>
+                <button class="btn-tips" id="tips-btn">Basic Tips <br><span
+                        style="font-size: 0.8rem; letter-spacing: 1px;">for Low Level Conditions</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WRAPPER FOR DASHBOARD TO ALLOW ROTATION -->
+    <div id="main-dashboard">
+
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}?v=17.14" class="me-3" width="180"
+                        height="180"
+                        style="width: 180px; height: 180px; border-radius: 50%; box-shadow: 0 0 40px var(--neon-blue);"
+                        alt="MindMate Logo">
+                    <span class="fw-bold"
+                        style="font-family: 'Orbitron'; font-size: 2rem; color: #000; background-color: #FFA500; padding: 2px 15px; border-radius: 8px; font-weight: 800; white-space: nowrap; display: inline-block;">MindMate</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- END HEADER, START CONTENT (Nested Correctly) -->
+
+        <!-- Script for Random Animations & Logic -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // 1. ANIMATION STATE PREP
+                const flash = document.getElementById('thunder-flash');
+                const landingPage = document.getElementById('landing-page');
+                const dashboard = document.getElementById('main-dashboard');
+                let dashboardActive = false;
+
+                // 2. AMBIENT THUNDER (DASHBOARD ONLY - MODERATE)
+                function startDashboardThunder() {
+                    if (!dashboardActive) return;
+
+                    const delay = Math.random() * 8000 + 5000; // Slower: 5-13s
+                    setTimeout(() => {
+                        if (window.gsap && dashboardActive) {
+                            // Moderate intensity (0.05 - 0.15 opacity)
+                            const opacity = Math.random() * 0.1 + 0.05;
+                            gsap.to(flash, { opacity: opacity, duration: 0.2, yoyo: true, repeat: 1, ease: "power1.inOut" });
+                        }
+                        startDashboardThunder();
+                    }, delay);
+                }
+
+                // 3. START TRANSITION
+                const startBtn = document.getElementById('start-btn');
+                const tipsBtn = document.getElementById('tips-btn');
+
+                // Text Styling for "Daily Wisdom" area ambient effect
+                const wisdomTexts = document.querySelectorAll('.flashcard p, .flashcard h4');
+                if (wisdomTexts) {
+                    gsap.to(wisdomTexts, { opacity: 0.8, textShadow: "0 0 5px rgba(255,255,255,0.3)", duration: 3, yoyo: true, repeat: -1, stagger: 0.5 });
+                }
+
+                function transitionToDashboard(openChatImmediately = false) {
+                    if (!window.gsap) return;
+
+                    // Transition Thunder (One-time flash)
+                    gsap.to(flash, { opacity: 0.8, duration: 0.2, yoyo: true, repeat: 3, onComplete: () => flash.style.opacity = 0 });
+
+                    // 3D Flip Out Landing
+                    gsap.to(landingPage, {
+                        rotationY: -180,
+                        opacity: 0,
+                        scale: 0.8,
+                        duration: 1.2,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            landingPage.style.display = 'none';
+                            dashboardActive = true;
+                            startDashboardThunder(); // Start moderate thunder now
+                        }
+                    });
+
+                    if (openChatImmediately) {
+                        // DIRECT CHAT MODE: Skip Dashboard entirely
+                        // Just hide landing page (done above) and open chat.
+                        setTimeout(() => openFullChat(), 800);
+                    } else {
+                        // TIPS MODE: Show Dashboard
+                        dashboard.style.display = 'block';
+                        setTimeout(() => dashboard.classList.add('active'), 100);
+
+                        // Just show the toggle button? NO, button removal requested.
+                        // So we just do nothing here. Chat remains hidden.
+                    }
+                }
+
+                if (startBtn) {
+                    startBtn.addEventListener('click', () => {
+                        transitionToDashboard(true); // Open Chat Directly
+                    });
+                }
+
+                if (tipsBtn) {
+                    tipsBtn.addEventListener('click', () => {
+                        transitionToDashboard(false); // Just show dashboard (tips)
+                    });
+                }
+            });
+
+            // 4. GLOBAL BUTTON VFX - PARTICLE BURST (GLOBAL SCOPE)
+            function spawnParticles(x, y) {
+                const colors = ['#00f3ff', '#bc13fe', '#ffa500', '#ffffff'];
+                const particleCount = 12;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p = document.createElement('div');
+                    p.classList.add('magic-particle');
+                    document.body.appendChild(p);
+
+                    // Random Physics
+                    const angle = Math.random() * Math.PI * 2;
+                    const velocity = Math.random() * 60 + 20;
+                    const tx = Math.cos(angle) * velocity;
+                    const ty = Math.sin(angle) * velocity;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+
+                    p.style.backgroundColor = color;
+                    p.style.boxShadow = `0 0 10px ${color}`;
+                    p.style.width = Math.random() * 6 + 2 + 'px';
+                    p.style.height = p.style.width;
+                    p.style.border = 'none';
+
+                    // Set initial position
+                    if (window.gsap) {
+                        gsap.set(p, { x: x, y: y, opacity: 1 });
+                        gsap.to(p, {
+                            x: x + tx,
+                            y: y + ty,
+                            opacity: 0,
+                            scale: 0,
+                            duration: Math.random() * 0.5 + 0.3,
+                            ease: "power2.out",
+                            onComplete: () => p.remove()
+                        });
+                    } else {
+                        p.remove(); // Fallback
+                    }
+                }
+            }
+
+            // Attach Global Click Listener for VFX
+            document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('click', (e) => {
+                    const target = e.target.closest('button');
+                    if (target) {
+                        spawnParticles(e.clientX, e.clientY);
+                        if (window.gsap) gsap.fromTo(target, { scale: 0.95 }, { scale: 1, duration: 0.2, ease: "elastic.out(1, 0.3)" });
+                    }
+                });
+            });
+
+            // 5. CHAT BUTTON "4 CORNERS" TRAVELER ANIMATION & TOGGLE LOGIC
+            function toggleChat() {
+                const chat = document.getElementById('chat-interface');
+                const btn = document.getElementById('chat-toggle-btn');
+                const currentDisplay = window.getComputedStyle(chat).display;
+
+                // VFX for Chat Button specifically
+                if (btn && currentDisplay === 'none') {
+                    const rect = btn.getBoundingClientRect();
+                    spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+
+                if (currentDisplay === 'none') {
+                    // OPENING
+                    if (window.gsap && btn) {
+                        // Disable clicks during animation
+                        btn.style.pointerEvents = 'none';
+                        btn.style.animation = 'none';
+
+                        // Calculate Corners (Travel Path)
+                        const travelY = -(window.innerHeight - 100);
+                        const travelX = -(window.innerWidth - 100);
+
+                        const timeline = gsap.timeline({
+                            onComplete: () => {
+                                btn.style.display = 'none'; // Hide button after travel
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.transform = '';
+                                btn.style.animation = '';
+
+                                chat.style.display = 'flex';
+                                gsap.fromTo(chat,
+                                    { rotationY: 90, opacity: 0, scale: 0.1 },
+                                    { rotationY: 0, opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }
+                                );
+                            }
+                        });
+
+                        // Sequence
+                        timeline
+                            .to(btn, { y: travelY, duration: 0.6, ease: "power2.inOut" })
+                            .to(btn, { x: travelX, duration: 1.0, ease: "slow(0.7, 0.7, false)" })
+                            .to(btn, { y: 0, duration: 0.6, ease: "power2.inOut" })
+                            .to(btn, { x: 0, duration: 1.0, ease: "slow(0.7, 0.7, false)" })
+                            .to(btn, { rotation: 360, scale: 1.2, duration: 0.5 });
+
+                    } else {
+                        // Fallback or direct open
+                        chat.style.display = 'flex';
+                        if (btn) btn.style.display = 'none';
+                        if (window.gsap) {
+                            gsap.fromTo(chat,
+                                { rotationY: 90, opacity: 0, scale: 0.1 },
+                                { rotationY: 0, opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }
+                            );
+                        }
+                    }
+                } else {
+                    // CLOSING
+                    if (window.gsap) {
+                        gsap.to(chat, {
+                            opacity: 0,
+                            scale: 0.8,
+                            duration: 0.3,
+                            onComplete: () => {
+                                chat.style.display = 'none';
+                                if (btn) {
+                                    btn.style.display = 'block';
+                                    gsap.fromTo(btn, { scale: 0 }, { scale: 1, duration: 0.4 });
+                                }
+                            }
+                        });
+                    } else {
+                        chat.style.display = 'none';
+                        if (btn) btn.style.display = 'block';
+                    }
+                }
+            }
+        </script>
+
+        <!-- Main Resource Hub -->
+        <div class="container mt-4" id="resource-hub">
+
+            <!-- Hero Section -->
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold text-white mb-3" style="text-shadow: 0 0 20px rgba(0,243,255,0.5);">
+                        Your
+                        Sanctuary for Balance</h1>
+                    <p class="lead text-muted">Explore tools for your mind, body, and soul.</p>
+                </div>
+            </div>
+
+            <!-- Flashcards (Power Tools) -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="text-white mb-4 border-bottom border-secondary pb-2" style="font-family: 'Orbitron'">⚡
+                        Daily
+                        Wisdom</h3>
+                </div>
+                <div class="col-12">
+                    <div id="flashcard-container" class="d-flex flex-wrap justify-content-center gap-4">
+                        <!-- Cards injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Articles / Modules -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="text-center mb-3">
+                            <img src="{{ url_for('static', filename='img/emotional.png') }}?v=17.14" width="120"
+                                height="120"
+                                style="width: 120px; height: 120px; filter: drop-shadow(0 0 15px var(--neon-blue));">
+                        </div>
+                        <h4 class="text-white mt-2">Emotional Health</h4>
+                        <p class="text-muted small">Understanding your feelings is the first step. Practice mindfulness
+                            and
+                            self-compassion.</p>
+                        <button class="btn btn-sm btn-outline-info mt-3" onclick="openTool('breathe')">Start
+                            Breathing</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="text-center mb-3">
+                            <img src="{{ url_for('static', filename='img/physical.png') }}?v=17.14" width="120"
+                                height="120"
+                                style="width: 120px; height: 120px; filter: drop-shadow(0 0 15px var(--neon-purple));">
+                        </div>
+                        <h4 class="text-white mt-2">Physical Grounding</h4>
+                        <p class="text-muted small">Connect with your body. Use the 5-4-3-2-1 technique to anchor
+                            yourself
+                            in the present.</p>
+                        <button class="btn btn-sm btn-outline-warning mt-3" onclick="openTool('grounding')">Grounding
+                            Tool</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="text-danger" style="font-size: 8rem;">🎯</div>
+                        <h4 class="text-white mt-2">Focus & Clarity</h4>
+                        <p class="text-muted small">Channel your energy. Use the Power Timer to break tasks into
+                            manageable storms.</p>
+                        <!-- Interactive Timer UI -->
+                        <div class="mt-3 text-center border border-secondary rounded p-2 position-relative"
+                            style="overflow: hidden; height: 80px; display: flex; flex-direction: column; justify-content: center; background: rgba(0,0,0,0.5);">
+                            <div id="timer-progress"
+                                style="position: absolute; bottom:0; left:0; height: 100%; width: 0%; background: linear-gradient(90deg, rgba(220, 53, 69, 0.4), rgba(220, 53, 69, 0.8)); z-index: 0; transition: width 1s linear;">
+                            </div>
+                            <h2 id="timer-display" class="mb-0 text-white"
+                                style="font-family: 'Orbitron'; position: relative; z-index: 1; text-shadow: 0 0 10px red;">
+                                05:00</h2>
+                            <p id="timer-status" class="small text-muted mb-0" style="position: relative; z-index: 1;">
+                                Ready to Focus?</p>
+                        </div>
+                        <div class="d-flex gap-2 mt-2" id="timer-controls">
+                            <button class="btn btn-sm btn-outline-danger flex-grow-1" onclick="startFocusTimer(5)">Start
+                                5m</button>
+                            <button class="btn btn-sm btn-outline-warning flex-grow-1"
+                                onclick="startFocusTimer(25)">Start
+                                25m</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div><!-- End of main-dashboard -->
+
+    <!-- Floating Chat Widget (Hidden Container) -->
+    <div id="chat-widget-container">
+        <!-- Button Removed as per request -->
+        <div id="chat-interface" class="chat-popup card glass-card">
+            <div
+                class="card-header bg-transparent border-bottom border-light d-flex justify-content-between align-items-center">
+                <span class="fw-bold"
+                    style="font-family: 'Orbitron'; color: #000; background-color: #FFA500; padding: 2px 10px; border-radius: 5px; font-size: 1.1rem; display: inline-block;">MindMate
+                    AI</span>
+                <div>
+                    <button class="btn btn-sm btn-link text-white text-decoration-none" onclick="resetChat()">↻</button>
+                    <!-- Close button in full mode goes back to dashboard -->
+                    <button class="btn btn-sm btn-link text-white text-decoration-none"
+                        onclick="closeChatMode()">×</button>
+                </div>
+            </div>
+            <div class="card-body p-0 d-flex flex-column" style="height: 400px;">
+                <div class="chat-messages p-3" id="messages-area" style="flex: 1; overflow-y: auto;">
+                    <div class="message bot-message">Hello. I am here if you need to talk.</div>
+                </div>
+                <div class="d-flex align-items-center p-2 border-top border-secondary bg-dark bg-opacity-50">
+                    <button class="btn btn-sm btn-danger rounded-circle me-1" onclick="endSession()"
+                        title="End Session & Download">📥</button>
+                    <input type="text" id="user-input" class="form-control me-2" placeholder="Type..."
+                        autocomplete="off">
+                    <button class="btn btn-sm btn-info rounded-circle" id="send-btn">➤</button>
+                    <button class="btn btn-sm btn-outline-light rounded-circle ms-1" id="mic-btn">🎤</button>
+                    <!-- Upload Button -->
+                    <input type="file" id="report-upload" style="display: none;" accept=".pdf,.txt">
+                    <button class="btn btn-sm btn-outline-secondary rounded-circle ms-1" id="upload-btn"
+                        title="Upload Health Report"
+                        onclick="document.getElementById('report-upload').click()">📎</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zen Player (Removed - Integrated into Chat) -->
+    <div style="display:none;"></div>
+
+    <!-- Restored Overlays (Outside dashboard for proper z-index) -->
+    <div id="overlay-breathe" class="tool-overlay">
+        <div class="overlay-content">
+            <button class="close-overlay" onclick="closeOverlays()">×</button>
+            <h2 class="mb-4 text-info">Resonance Breathing</h2>
+            <div id="breath-circle" class="mx-auto my-4"
+                style="width: 150px; height: 150px; background: #00f3ff; border-radius: 50%; box-shadow: 0 0 50px #00f3ff;">
+            </div>
+            <p class="mt-4 lead text-white" id="breath-text">Inhale...</p>
+        </div>
+    </div>
+
+    <div id="overlay-grounding" class="tool-overlay">
+        <div class="overlay-content">
+            <button class="close-overlay" onclick="closeOverlays()">×</button>
+            <h3 class="mb-4 text-warning" style="font-family: 'Orbitron'; letter-spacing: 2px;">⚓ Reality Anchor</h3>
+            <p class="text-muted mb-4">Use the 5-4-3-2-1 technique to ground yourself.</p>
+
+            <div class="d-flex flex-column gap-3 text-start mx-auto" style="max-width: 400px; font-size: 1.2rem;">
+                <div class="p-3 border border-secondary rounded bg-dark d-flex align-items-center">
+                    <span class="fs-2 me-3">👀</span>
+                    <div><strong class="text-white">5</strong> Things you can <span class="text-info">See</span></div>
+                </div>
+                <div class="p-3 border border-secondary rounded bg-dark d-flex align-items-center">
+                    <span class="fs-2 me-3">✋</span>
+                    <div><strong class="text-white">4</strong> Things you can <span class="text-info">Feel</span></div>
+                </div>
+                <div class="p-3 border border-secondary rounded bg-dark d-flex align-items-center">
+                    <span class="fs-2 me-3">👂</span>
+                    <div><strong class="text-white">3</strong> Things you can <span class="text-info">Hear</span></div>
+                </div>
+                <div class="p-3 border border-secondary rounded bg-dark d-flex align-items-center">
+                    <span class="fs-2 me-3">👃</span>
+                    <div><strong class="text-white">2</strong> Things you can <span class="text-info">Smell</span></div>
+                </div>
+                <div class="p-3 border border-secondary rounded bg-dark d-flex align-items-center">
+                    <span class="fs-2 me-3">👅</span>
+                    <div><strong class="text-white">1</strong> Thing you can <span class="text-info">Taste</span></div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline-warning mt-4 px-4 rounded-pill" onclick="closeOverlays()">I feel
+                grounded</button>
+        </div>
+    </div>
+
+    <!-- Hidden Inputs -->
+    <input type="hidden" id="session-id" value="{{ session_id }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/gsap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}?v=17.13"></script>
+    <script src="{{ url_for('static', filename='js/audio_engine.js') }}?v=17.13"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}?v=17.13"></script>
+    <script src="{{ url_for('static', filename='js/flashcards.js') }}"></script>
+    <script>
+        // Inline layout script logic
+
+        function openFullChat() {
+            const chat = document.getElementById('chat-interface');
+            const dashboard = document.getElementById('main-dashboard');
+            const landing = document.getElementById('landing-page');
+
+            document.body.classList.add('zen-active');
+
+            // Aggressively hide other layers
+            if (dashboard) dashboard.style.display = 'none';
+            if (landing) landing.style.display = 'none';
+
+            chat.style.display = 'flex';
+
+            if (window.gsap) {
+                gsap.fromTo(chat,
+                    { scale: 0.8, opacity: 0 },
+                    { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }
+                );
+            }
+        }
+
+        function closeChatMode() {
+            const chat = document.getElementById('chat-interface');
+            const landingPage = document.getElementById('landing-page');
+
+            document.body.classList.remove('zen-active');
+
+            if (window.gsap) {
+                gsap.to(chat, {
+                    scale: 0.8, opacity: 0, duration: 0.3,
+                    onComplete: () => {
+                        chat.style.display = 'none';
+                        // Restore Landing Page
+                        if (landingPage) {
+                            landingPage.style.display = 'flex';
+                            gsap.to(landingPage, { opacity: 1, scale: 1, rotationY: 0, duration: 0.8 });
+                        }
+                    }
+                });
+            } else {
+                chat.style.display = 'none';
+                if (landingPage) landingPage.style.display = 'flex';
+            }
+        }
+
+        // Redefine toggleChat to do nothing or open full chat (safety reference)
+        function toggleChat() {
+            openFullChat();
+        }
+    </script>
+</body>
+
+</html>
